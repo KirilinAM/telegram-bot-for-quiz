@@ -171,3 +171,4 @@ cython_debug/
 .pypirc
 
 API_KEY.py
+quiz_bot.db
