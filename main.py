@@ -55,6 +55,9 @@ async def new_quiz(message):
 
 
 async def get_question(message, user_id):
+    # Отсекаем вопрос
+    await message.answer('vvvvvv')
+
     # Запрашиваем из базы текущий индекс для вопроса
     current_question_index = await get_quiz_index(user_id)
     # Получаем индекс правильного ответа для текущего вопроса
