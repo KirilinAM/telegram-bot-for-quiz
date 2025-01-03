@@ -8,7 +8,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from aiogram import F
 import json
 
-from database import create_table, update_quiz_index, get_quiz_index
+from database import create_table, update_quiz_index, get_quiz_index, get_quiz_score, update_quiz_score
 
 from API_KEY import API_KEY
 from quiz_structure import quiz_data
@@ -46,9 +46,9 @@ async def cmd_quiz(message: types.Message):
 async def new_quiz(message):
     # получаем id пользователя, отправившего сообщение
     user_id = message.from_user.id
-    # сбрасываем значение текущего индекса вопроса квиза в 0
-    current_question_index = 0
-    await update_quiz_index(user_id, current_question_index)
+    # сбрасываем значение текущего индекса вопроса квиза и счет в 0
+    await update_quiz_index(user_id, 0)
+    await update_quiz_score(user_id, 0)
 
     # запрашиваем новый вопрос для квиза
     await get_question(message, user_id)
@@ -110,6 +110,9 @@ async def answer_callback(callback: types.CallbackQuery):
         reply_markup=None
     )
 
+    # Получение текущего счета
+    current_score = await get_quiz_score(callback.from_user.id)
+
     # Получение текущего вопроса для данного пользователя
     current_question_index = await get_quiz_index(callback.from_user.id)
     correct_option = quiz_data[current_question_index]['correct_option']
@@ -118,12 +121,15 @@ async def answer_callback(callback: types.CallbackQuery):
     # Дублируем в чате ответ
     await callback.message.answer(f"Выбранный вариант: {text}")
 
-    # Отправляем в чат оценку ответа
+    # Отправляем в чат оценку ответа и увеличиваем счет при правильном ответе
     if callback_data['is_right']:
+        current_score += 1
+        await update_quiz_score(callback.from_user.id, current_score)
         await callback.message.answer("Верно!")
     else:
         await callback.message.answer(
             f"Неправильно. Правильный ответ: {correct_answer}")
+    await callback.message.answer(f"Текущий счет: {current_score}")
 
     # Обновление номера текущего вопроса в базе данных
     current_question_index += 1
