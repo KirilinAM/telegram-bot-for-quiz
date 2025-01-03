@@ -46,7 +46,7 @@ async def cmd_quiz(message: types.Message):
 
 
 @dp.message(F.text == "Статистика игроков")
-@dp.message(Command("stast"))
+@dp.message(Command("stats"))
 async def cmd_stats(message: types.Message):
     await message.answer(f"Статистика игроков:")
     await message.answer(f"id: счет")
