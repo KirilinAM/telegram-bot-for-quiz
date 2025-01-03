@@ -1,3 +1,3 @@
-`/start` --- подключение к боту
-`/quiz` --- начало нового квиза
-`/stats` --- вывод счета последнего квиза для всех пользователей
+`/start` --- connecting to the bot
+`/quiz` --- the beginning of a new quiz
+`/stats` --- withdrawal of the score of the last quiz for all users
