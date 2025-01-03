@@ -48,6 +48,16 @@ async def get_quiz_score(user_id):
                 return 0
 
 
+async def get_all_quiz_score():
+    # Подключаемся к базе данных
+    async with aiosqlite.connect(DB_NAME) as db:
+        # Получаем запись для заданного пользователя
+        async with db.execute('SELECT user_id, last_score FROM quiz_score ORDER BY last_score DESC') as cursor:
+            # Возвращаем результат
+            results = await cursor.fetchall()
+            return results
+
+
 async def update_quiz_score(user_id, new_score):
     # Создаем соединение с базой данных (если она не существует, она будет создана)
     async with aiosqlite.connect(DB_NAME) as db:

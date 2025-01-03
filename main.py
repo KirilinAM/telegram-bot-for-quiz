@@ -8,7 +8,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from aiogram import F
 import json
 
-from database import create_table, update_quiz_index, get_quiz_index, get_quiz_score, update_quiz_score
+from database import create_table, update_quiz_index, get_quiz_index, get_quiz_score, update_quiz_score, get_all_quiz_score
 
 from API_KEY import API_KEY
 from quiz_structure import quiz_data
@@ -28,8 +28,10 @@ dp = Dispatcher()
 async def cmd_start(message: types.Message):
     # Создаем сборщика клавиатур типа Reply
     builder = ReplyKeyboardBuilder()
-    # Добавляем в сборщик одну кнопку
+    # Кнопка начала игры
     builder.add(types.KeyboardButton(text="Начать игру"))
+    # Кнопка вывода статистики
+    builder.add(types.KeyboardButton(text="Статистика игроков"))
     # Прикрепляем кнопки к сообщению
     await message.answer("Добро пожаловать в квиз!", reply_markup=builder.as_markup(resize_keyboard=True))
 
@@ -41,6 +43,17 @@ async def cmd_quiz(message: types.Message):
     await message.answer(f"Давайте начнем квиз!")
     # Запускаем новый квиз
     await new_quiz(message)
+
+
+@dp.message(F.text == "Статистика игроков")
+@dp.message(Command("stast"))
+async def cmd_stats(message: types.Message):
+    await message.answer(f"Статистика игроков:")
+    await message.answer(f"id: счет")
+
+    result = await get_all_quiz_score()
+    for row in result:
+        await message.answer(f"{row[0]}: {row[1]}")
 
 
 async def new_quiz(message):
