@@ -173,3 +173,5 @@ cython_debug/
 API_KEY.py
 quiz_bot.db
 test.py
+
+.codegpt
